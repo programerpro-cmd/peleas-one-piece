@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Piece Battle Arena</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game">
+    <h1>⚔️ One Piece Battle Arena</h1>
+    <p class="subtitle">Elige tu pirata y derrota a tu rival en una pelea por turnos.</p>
+
+    <section class="fighters" aria-label="Selección de peleadores">
+      <article class="fighter" id="player-card">
+        <h2>Jugador</h2>
+        <p id="player-name">Monkey D. Luffy</p>
+        <div class="healthbar" role="img" aria-label="Vida del jugador">
+          <span id="player-healthbar"></span>
+        </div>
+        <p><strong>Vida:</strong> <span id="player-health">100</span></p>
+      </article>
+
+      <article class="fighter" id="enemy-card">
+        <h2>Enemigo</h2>
+        <p id="enemy-name">Roronoa Zoro</p>
+        <div class="healthbar" role="img" aria-label="Vida del enemigo">
+          <span id="enemy-healthbar"></span>
+        </div>
+        <p><strong>Vida:</strong> <span id="enemy-health">100</span></p>
+      </article>
+    </section>
+
+    <section class="controls" aria-label="Controles del juego">
+      <label for="character-select">Tu personaje:</label>
+      <select id="character-select">
+        <option value="luffy">Monkey D. Luffy</option>
+        <option value="zoro">Roronoa Zoro</option>
+        <option value="sanji">Vinsmoke Sanji</option>
+        <option value="ace">Portgas D. Ace</option>
+      </select>
+      <button id="attack-btn">Ataque básico</button>
+      <button id="special-btn">Ataque especial</button>
+      <button id="reset-btn">Nueva pelea</button>
+    </section>
+
+    <section class="log" aria-live="polite">
+      <h3>Registro del combate</h3>
+      <ul id="battle-log"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --ok: #22c55e;
+  --text: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(circle at top, #1d4ed8, var(--bg));
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.game {
+  width: min(900px, 100%);
+  background: rgba(15, 23, 42, 0.92);
+  border: 2px solid #334155;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+h1,
+.subtitle,
+h3 {
+  text-align: center;
+}
+
+.fighters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.fighter {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #475569;
+}
+
+.healthbar {
+  width: 100%;
+  height: 14px;
+  background: #0b1220;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #475569;
+}
+
+.healthbar span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--ok), #86efac);
+  transition: width 250ms ease-in-out;
+}
+
+.controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+button,
+select {
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #64748b;
+  background: #0b1220;
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+.log {
+  margin-top: 1rem;
+  background: #0b1220;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  padding: 0.75rem;
+}
+
+#battle-log {
+  margin: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-left: 1.2rem;
+}
+
+#battle-log li {
+  margin-bottom: 0.35rem;
+}
+
+.win {
+  color: var(--ok);
+  font-weight: bold;
+}
+
+.lose {
+  color: var(--danger);
+  font-weight: bold;
+}
