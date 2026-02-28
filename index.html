@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>One Piece Battle Arena</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="game">
+    <h1>⚔️ One Piece Battle Arena</h1>
+    <p class="subtitle">Supera la saga: Lucci → Doflamingo → Katakuri → Kaido y desbloquea los Gear de Luffy.</p>
+
+    <section class="progress" aria-label="Progreso de campaña">
+      <p><strong>Nivel:</strong> <span id="level-label">1</span></p>
+      <p><strong>Gear actual:</strong> <span id="gear-label">Gear 1</span></p>
+      <p><strong>Siguiente desbloqueo:</strong> <span id="next-unlock">Gear 2 al vencer este nivel</span></p>
+    </section>
+
+    <section class="fighters" aria-label="Estado del combate">
+      <article class="fighter" id="player-card">
+        <h2>Jugador</h2>
+        <p id="player-name">Monkey D. Luffy</p>
+        <div class="healthbar" role="img" aria-label="Vida del jugador">
+          <span id="player-healthbar"></span>
+        </div>
+        <p><strong>Vida:</strong> <span id="player-health">100</span></p>
+      </article>
+
+      <article class="fighter" id="enemy-card">
+        <h2>Jefe</h2>
+        <p id="enemy-name">Rob Lucci</p>
+        <div class="healthbar" role="img" aria-label="Vida del enemigo">
+          <span id="enemy-healthbar"></span>
+        </div>
+        <p><strong>Vida:</strong> <span id="enemy-health">120</span></p>
+      </article>
+    </section>
+
+    <section class="controls" aria-label="Controles del juego">
+      <button id="attack-btn">Puño básico</button>
+      <button id="special-btn">Técnica Gear</button>
+      <button id="reset-btn">Reiniciar campaña</button>
+    </section>
+
+    <section class="log" aria-live="polite">
+      <h3>Registro del combate</h3>
+      <ul id="battle-log"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
