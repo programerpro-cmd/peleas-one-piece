@@ -1,9 +1,17 @@
-const fighters = {
-  luffy: { name: 'Monkey D. Luffy', basic: [8, 16], special: [15, 28], line: '¡Gomu Gomu no...!' },
-  zoro: { name: 'Roronoa Zoro', basic: [9, 17], special: [14, 30], line: '¡Santoryu en acción!' },
-  sanji: { name: 'Vinsmoke Sanji', basic: [7, 18], special: [16, 27], line: '¡Diable Jambe!' },
-  ace: { name: 'Portgas D. Ace', basic: [8, 15], special: [17, 29], line: '¡Hiken!' }
-};
+const gears = [
+  { name: 'Gear 1', basic: [8, 14], special: [14, 22], line: '¡Gomu Gomu no Pistol!' },
+  { name: 'Gear 2', basic: [11, 18], special: [18, 28], line: '¡Jet Gatling!' },
+  { name: 'Gear 3', basic: [13, 21], special: [22, 32], line: '¡Gigant Rifle!' },
+  { name: 'Gear 4', basic: [16, 25], special: [27, 38], line: '¡Kong Gun!' },
+  { name: 'Gear 5', basic: [20, 30], special: [34, 48], line: '¡Bajrang Gun!' }
+];
+
+const bosses = [
+  { name: 'Rob Lucci', hp: 120, basic: [10, 16], special: [16, 24] },
+  { name: 'Donquixote Doflamingo', hp: 145, basic: [12, 18], special: [18, 27] },
+  { name: 'Charlotte Katakuri', hp: 170, basic: [14, 21], special: [21, 30] },
+  { name: 'Kaido', hp: 210, basic: [16, 24], special: [25, 36] }
+];
 
 const playerName = document.getElementById('player-name');
 const enemyName = document.getElementById('enemy-name');
@@ -12,16 +20,18 @@ const enemyHealthText = document.getElementById('enemy-health');
 const playerBar = document.getElementById('player-healthbar');
 const enemyBar = document.getElementById('enemy-healthbar');
 const log = document.getElementById('battle-log');
-const select = document.getElementById('character-select');
 const attackBtn = document.getElementById('attack-btn');
 const specialBtn = document.getElementById('special-btn');
 const resetBtn = document.getElementById('reset-btn');
+const levelLabel = document.getElementById('level-label');
+const gearLabel = document.getElementById('gear-label');
+const nextUnlock = document.getElementById('next-unlock');
 
 let state = {
-  playerKey: 'luffy',
-  enemyKey: 'zoro',
+  level: 0,
+  gear: 0,
   playerHp: 100,
-  enemyHp: 100,
+  enemyHp: bosses[0].hp,
   gameOver: false
 };
 
@@ -36,87 +46,132 @@ function writeLog(message, cssClass = '') {
   log.prepend(item);
 }
 
-function updateUi() {
-  const playerPct = Math.max(state.playerHp, 0);
-  const enemyPct = Math.max(state.enemyHp, 0);
+function currentBoss() {
+  return bosses[state.level];
+}
 
-  playerName.textContent = fighters[state.playerKey].name;
-  enemyName.textContent = fighters[state.enemyKey].name;
+function currentGear() {
+  return gears[state.gear];
+}
+
+function updateUi() {
+  const boss = currentBoss();
+  const maxBossHp = boss.hp;
+  const playerPct = Math.max(state.playerHp, 0);
+  const enemyPct = Math.max((state.enemyHp / maxBossHp) * 100, 0);
+
+  playerName.textContent = 'Monkey D. Luffy';
+  enemyName.textContent = boss.name;
   playerHealthText.textContent = state.playerHp;
   enemyHealthText.textContent = state.enemyHp;
   playerBar.style.width = `${playerPct}%`;
   enemyBar.style.width = `${enemyPct}%`;
+
+  levelLabel.textContent = `${state.level + 1} / ${bosses.length}`;
+  gearLabel.textContent = currentGear().name;
+  nextUnlock.textContent = state.gear < gears.length - 1
+    ? `${gears[state.gear + 1].name} al vencer este nivel`
+    : 'Máximo desbloqueado';
 }
 
-function pickEnemy() {
-  const keys = Object.keys(fighters).filter((key) => key !== state.playerKey);
-  state.enemyKey = keys[randomInt(0, keys.length - 1)];
+function setControlsEnabled(enabled) {
+  attackBtn.disabled = !enabled;
+  specialBtn.disabled = !enabled;
 }
 
-function endGame(playerWon) {
+function startLevel() {
+  state.playerHp = 100;
+  state.enemyHp = currentBoss().hp;
+  state.gameOver = false;
+  setControlsEnabled(true);
+  writeLog(`🔥 Nivel ${state.level + 1}: Luffy vs ${currentBoss().name}.`);
+  updateUi();
+}
+
+function winCampaign() {
   state.gameOver = true;
-  attackBtn.disabled = true;
-  specialBtn.disabled = true;
-  if (playerWon) {
-    writeLog(`🏴‍☠️ ${fighters[state.playerKey].name} gana el combate. ¡Te conviertes en Rey de los Piratas!`, 'win');
-  } else {
-    writeLog(`💥 ${fighters[state.enemyKey].name} te derrotó. Entrena y vuelve al Grand Line.`, 'lose');
+  setControlsEnabled(false);
+  writeLog('👑 ¡Has derrotado a todos! Luffy domina el Gear 5 y se acerca al One Piece.', 'win');
+}
+
+function loseBattle() {
+  state.gameOver = true;
+  setControlsEnabled(false);
+  writeLog(`💥 ${currentBoss().name} te derrotó. Pulsa "Reiniciar campaña" para intentarlo otra vez.`, 'lose');
+}
+
+function unlockNextGearIfPossible() {
+  if (state.gear < gears.length - 1) {
+    state.gear += 1;
+    writeLog(`✨ Desbloqueado: ${currentGear().name}.`, 'win');
   }
+}
+
+function handleVictory() {
+  writeLog(`🏴‍☠️ ¡Venciste a ${currentBoss().name}!`, 'win');
+  unlockNextGearIfPossible();
+
+  if (state.level === bosses.length - 1) {
+    winCampaign();
+    updateUi();
+    return;
+  }
+
+  state.level += 1;
+  startLevel();
 }
 
 function enemyTurn() {
   if (state.gameOver) return;
-  const enemy = fighters[state.enemyKey];
+  const boss = currentBoss();
   const useSpecial = Math.random() < 0.35;
-  const [min, max] = useSpecial ? enemy.special : enemy.basic;
+  const [min, max] = useSpecial ? boss.special : boss.basic;
   const damage = randomInt(min, max);
+
   state.playerHp = Math.max(0, state.playerHp - damage);
-  writeLog(`${enemy.name} contraataca (${useSpecial ? 'especial' : 'básico'}) y te quita ${damage} de vida.`);
+  writeLog(`${boss.name} contraataca (${useSpecial ? 'especial' : 'básico'}) y te quita ${damage} de vida.`);
   updateUi();
 
   if (state.playerHp <= 0) {
-    endGame(false);
+    loseBattle();
   }
 }
 
 function playerTurn(kind) {
   if (state.gameOver) return;
 
-  const player = fighters[state.playerKey];
-  const [min, max] = kind === 'special' ? player.special : player.basic;
+  const gear = currentGear();
+  const [min, max] = kind === 'special' ? gear.special : gear.basic;
   const damage = randomInt(min, max);
 
   state.enemyHp = Math.max(0, state.enemyHp - damage);
-  writeLog(`${player.line} Ataque ${kind === 'special' ? 'especial' : 'básico'}: haces ${damage} de daño.`);
+  writeLog(`${gear.line} Ataque ${kind === 'special' ? 'Gear' : 'básico'}: haces ${damage} de daño.`);
   updateUi();
 
   if (state.enemyHp <= 0) {
-    endGame(true);
+    handleVictory();
     return;
   }
 
-  setTimeout(enemyTurn, 550);
+  setTimeout(enemyTurn, 500);
 }
 
-function resetGame() {
+function resetCampaign() {
   state = {
-    playerKey: select.value,
-    enemyKey: 'zoro',
+    level: 0,
+    gear: 0,
     playerHp: 100,
-    enemyHp: 100,
+    enemyHp: bosses[0].hp,
     gameOver: false
   };
-  pickEnemy();
-  attackBtn.disabled = false;
-  specialBtn.disabled = false;
+
   log.innerHTML = '';
-  writeLog(`Nuevo duelo: ${fighters[state.playerKey].name} vs ${fighters[state.enemyKey].name}.`);
-  updateUi();
+  writeLog('🏁 Comienza la campaña. Derrota a cada jefe para evolucionar de Gear.');
+  startLevel();
 }
 
 attackBtn.addEventListener('click', () => playerTurn('basic'));
 specialBtn.addEventListener('click', () => playerTurn('special'));
-resetBtn.addEventListener('click', resetGame);
-select.addEventListener('change', resetGame);
+resetBtn.addEventListener('click', resetCampaign);
 
-resetGame();
+resetCampaign();
